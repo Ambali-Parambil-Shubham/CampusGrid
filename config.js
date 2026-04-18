@@ -1,7 +1,9 @@
 // Supabase Configuration
-// TODO: Replace with your actual Supabase project URL and ANON KEY before running locally.
-const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+// Values are now loaded from env.js (which should be Git-ignored).
+// See env.example.js for the required structure.
+const SUPABASE_URL = window.ENV?.SUPABASE_URL || 'YOUR_SUPABASE_URL_HERE';
+const SUPABASE_ANON_KEY = window.ENV?.SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY_HERE';
+
 // Initialize Supabase client
 window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // Role → dashboard mapping
