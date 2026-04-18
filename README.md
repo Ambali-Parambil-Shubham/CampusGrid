@@ -15,8 +15,7 @@
 
 ### 🚀 Identity Portal / Landing Page
 <p align="center">
-  <!-- TODO: Add your actual landing page screenshot here -->
-  <img src="https://via.placeholder.com/900x450?text=Identity+Portal+Preview" width="900"/>
+  <img src="docs/index.png" width="900" alt="Identity Portal Preview"/>
 </p>
 
 <p align="center">
@@ -26,10 +25,13 @@
 
 ---
 
-### 🛠️ Warden & Guard Dashboards
+### 🛠️ Role Dashboards
 <p align="center">
-  <!-- TODO: Add your actual dashboard screenhots here -->
-  <img src="https://via.placeholder.com/900x450?text=Role+Dashboards+Preview" width="900"/>
+  <img src="docs/wardendash.png" width="450" alt="Warden Dashboard"/>
+  <img src="docs/guarddash.png" width="450" alt="Guard Dashboard"/>
+</p>
+<p align="center">
+  <img src="docs/studentdash.png" width="900" alt="Student Dashboard"/>
 </p>
 
 <p align="center">
