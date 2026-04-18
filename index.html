@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusGrid | Identity Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .auth-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+        .auth-card { width: 100%; max-width: 420px; text-align: center; animation: fade-in 0.6s var(--trans); }
+        .form-view { animation: slide-up 0.4s var(--trans); }
+        @keyframes slide-up { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="auth-container">
+        <div class="auth-card card">
+            <div style="margin-bottom: 3rem;">
+                <div style="background: var(--text-accent); color: var(--deep-forest); width: 64px; height: 64px; border-radius: 18px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; box-shadow: 0 0 20px rgba(228, 213, 183, 0.3);">🛡</div>
+                <h1 style="font-size: 2rem; margin-bottom: 0.5rem; letter-spacing: -1px;">CampusGrid</h1>
+                <p style="color: var(--text-accent); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7;">Security & Transit HUD</p>
+            </div>
+
+            <div id="view-session" class="form-view" style="display: none;">
+                <div style="width: 80px; height: 80px; background: var(--text-accent); color: var(--deep-forest); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.5rem; font-weight: 900;" id="sessInitial">?</div>
+                <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Active Session.</h2>
+                <p style="color: var(--text-accent); opacity: 0.6; font-size: 0.85rem; margin-bottom: 2.5rem;">Synchronized as <span id="sessName" style="color: #fff; font-weight: 800;">User</span></p>
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    <button onclick="redirectToDashboard()" class="btn btn-primary" style="width: 100%;">CONTINUE TO HUD →</button>
+                    <button onclick="Auth.logout()" class="btn" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border);">SWITCH IDENTITY</button>
+                </div>
+            </div>
+
+            <div id="authContent">
+                <div style="display: flex; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 14px; margin-bottom: 2.5rem;">
+                    <button id="tab-login" class="btn" style="flex: 1; background: var(--text-accent); color: var(--deep-forest);" onclick="showAuth('login')">SIGN IN</button>
+                    <button id="tab-register" class="btn" style="flex: 1; background: transparent; color: #fff;" onclick="showAuth('register')">REGISTER</button>
+                </div>
+
+                <div id="view-login" class="form-view">
+                    <form onsubmit="handleLogin(event)">
+                        <div style="margin-bottom: 1.5rem; text-align: left;">
+                            <label style="font-size: 0.75rem; font-weight: 800; color: var(--text-accent); text-transform: uppercase;">College ID</label>
+                            <input type="text" id="logId" class="input-control" placeholder="E.G. CID-12345" required style="margin-top: 0.5rem;">
+                        </div>
+                        <div style="margin-bottom: 2.5rem; text-align: left;">
+                            <label style="font-size: 0.75rem; font-weight: 800; color: var(--text-accent); text-transform: uppercase;">Access Password</label>
+                            <input type="password" id="logPass" class="input-control" placeholder="••••••••" required style="margin-top: 0.5rem;">
+                        </div>
+                        <button type="submit" id="logBtn" class="btn btn-primary" style="width: 100%;">AUTHENTICATE →</button>
+                    </form>
+                </div>
+
+                <div id="view-register" class="form-view" style="display: none;">
+                    <form onsubmit="handleRegister(event)">
+                        <input type="text" id="regName" class="input-control" placeholder="FULL LEGAL NAME" required style="margin-bottom: 0.75rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                            <input type="text" id="regId" class="input-control" placeholder="COLLEGE ID" required>
+                            <select id="regRole" class="input-control" onchange="toggleRoleFields(this.value)" required style="padding-right: 2rem;">
+                                <option value="STUDENT">Student</option>
+                                <option value="WARDEN">Warden</option>
+                                <option value="GUARD">Guard</option>
+                            </select>
+                        </div>
+                        <input type="password" id="regPass" class="input-control" placeholder="NEW PASSWORD" required style="margin-bottom: 0.75rem;">
+                        <div id="studentFields" style="margin-bottom: 2rem; display: block;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                                <input type="text" id="regRoll" class="input-control" placeholder="ROLL NO (E.G. E212)">
+                                <select id="regBranch" class="input-control">
+                                    <option value="" disabled selected>SELECT BRANCH</option>
+                                    <option value="CS">COMPUTER SCIENCE (CS)</option>
+                                    <option value="IT">INFRASTRUCTURE TECH (IT)</option>
+                                    <option value="ME">MECHANICAL ENG. (ME)</option>
+                                    <option value="EE">ELECTRICAL ENG. (EE)</option>
+                                    <option value="CE">CIVIL ENG. (CE)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" id="regBtn" class="btn btn-primary" style="width: 100%;">PROVISION IDENTITY →</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const UI = {
+            toast: (msg) => {
+                const container = document.getElementById('toastContainer');
+                const t = document.createElement('div'); t.className = 'toast';
+                t.textContent = msg; container.appendChild(t);
+                setTimeout(() => t.remove(), 4000);
+            }
+        };
+
+        function checkSession() {
+            const user = Auth.getCurrentUser();
+            if (user) {
+                document.getElementById('authContent').style.display = 'none';
+                document.getElementById('view-session').style.display = 'block';
+                document.getElementById('sessName').textContent = user.full_name || 'User';
+                document.getElementById('sessInitial').textContent = (user.full_name || 'U').charAt(0).toUpperCase();
+            }
+        }
+        function redirectToDashboard() { const user = Auth.getCurrentUser(); if (user) Auth.login(user); }
+        function showAuth(view) {
+            document.getElementById('view-login').style.display = (view === 'login') ? 'block' : 'none';
+            document.getElementById('view-register').style.display = (view === 'register') ? 'block' : 'none';
+            document.getElementById('tab-login').style.background = (view === 'login') ? 'var(--text-accent)' : 'transparent';
+            document.getElementById('tab-login').style.color = (view === 'login') ? 'var(--deep-forest)' : '#fff';
+            document.getElementById('tab-register').style.background = (view === 'register') ? 'var(--text-accent)' : 'transparent';
+            document.getElementById('tab-register').style.color = (view === 'register') ? 'var(--deep-forest)' : '#fff';
+        }
+        function toggleRoleFields(role) { document.getElementById('studentFields').style.display = (role === 'STUDENT') ? 'block' : 'none'; }
+        
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('logBtn'); btn.disabled = true; btn.textContent = 'AUTHENTICATING...';
+            try {
+                const { data: user, error } = await supabaseClient.from('users').select('*').eq('college_id', document.getElementById('logId').value.trim()).eq('password', document.getElementById('logPass').value).single();
+                if (error || !user) throw new Error('CREDENTIALS REJECTED');
+                UI.toast('Access Granted');
+                setTimeout(() => Auth.login(user), 1000);
+            } catch (err) { UI.toast(err.message); btn.disabled = false; btn.textContent = 'AUTHENTICATE →'; }
+        }
+        async function handleRegister(e) {
+            e.preventDefault();
+            const btn = document.getElementById('regBtn'); btn.disabled = true; btn.textContent = 'PROVISIONING UNIVERSE...';
+            try {
+                const role = document.getElementById('regRole').value;
+                const roll = document.getElementById('regRoll').value.trim().toUpperCase();
+                const branch = document.getElementById('regBranch').value.trim().toUpperCase();
+
+                if (role === 'STUDENT' && (!roll || !branch)) throw new Error('BRANCH & ROLL NO REQUIRED FOR STUDENTS');
+
+                const { data: newUser, error } = await supabaseClient.from('users').insert([{ 
+                    full_name: document.getElementById('regName').value.trim().toUpperCase(), 
+                    college_id: document.getElementById('regId').value.trim().toUpperCase(), 
+                    password: document.getElementById('regPass').value, 
+                    role: role 
+                }]).select().single();
+                
+                if (error) throw error;
+                if (role === 'STUDENT') { 
+                    await supabaseClient.from('students').insert([{ student_id: newUser.user_id, roll_no: roll, branch: branch }]); 
+                }
+                
+                UI.toast('Identity Provisioned');
+                setTimeout(() => Auth.login(newUser), 1000);
+            } catch (err) { UI.toast(err.message); btn.disabled = false; btn.textContent = 'PROVISION IDENTITY →'; }
+        }
+        window.onload = checkSession;
+    </script>
+</body>
+</html>
