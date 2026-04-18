@@ -13,32 +13,53 @@
 
 ## 📸 Product Preview
 
-### 🚀 Identity Portal / Landing Page
+### 🚀 Landing Page / Identity Portal
 <p align="center">
   <img src="docs/index.png" alt="Identity Portal Preview" style="max-width: 100%; height: auto;"/>
 </p>
 
 <p align="center">
-  <b>Role-Based Authentication</b><br/>
-  A secure gateway for Students, Wardens, and Guards with dedicated dashboards tailored for their specific responsibilities.
+  <b>Secure Role-Based Access</b><br/>
+  A unified entry point where Students, Wardens, and Guards authenticate and are routed to their respective dashboards with strict access control.
 </p>
 
 ---
 
-### 🛠️ Role Dashboards
-<p align="center">
-  <img src="docs/wardendash.png" alt="Warden Dashboard" style="max-width: 48%; height: auto;"/>
-  <img src="docs/guarddash.png" alt="Guard Dashboard" style="max-width: 48%; height: auto;"/>
-</p>
+### 🎓 Student Dashboard
 <p align="center">
   <img src="docs/studentdash.png" alt="Student Dashboard" style="max-width: 100%; height: auto;"/>
 </p>
 
 <p align="center">
-  <b>Centralized control for campus transit</b><br/>
-  Wardens can rapidly approve or reject requests, while Guards can securely scan QR transit tokens for real-time Entry/Exit logging.
+  <b>Seamless Leave Management</b><br/>
+  Students can apply for leave, track approval status in real time, and access dynamically generated QR transit passes.
 </p>
 
+---
+
+### 🧑‍💼 Warden Dashboard
+<p align="center">
+  <img src="docs/wardendash.png" alt="Warden Dashboard" style="max-width: 100%; height: auto;"/>
+</p>
+
+<p align="center">
+  <b>Efficient Approval Control</b><br/>
+  Wardens can review all leave requests, approve or reject them instantly, and maintain full oversight of student movement.
+</p>
+
+---
+
+### 🛂 Guard Dashboard
+<p align="center">
+  <img src="docs/guarddash.png" alt="Guard Dashboard" style="max-width: 100%; height: auto;"/>
+</p>
+
+<p align="center">
+  <b>Real-Time Gate Monitoring</b><br/>
+  Guards scan QR codes to log student Entry/Exit securely, ensuring accurate and tamper-proof transit records.
+</p>
+
+---
 ---
 
 ## 🚀 Overview
